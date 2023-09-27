@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "131796864563",
+    "project_id": "medbooker-project-edcca",
+    "storage_bucket": "medbooker-project-edcca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131796864563:android:7e5ab8a07bc041f4459d46",
+        "android_client_info": {
+          "package_name": "com.example.medbooker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiHVetvU9XHdYF_84Qy6EGbkA-eRBk9P8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
