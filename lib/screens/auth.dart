@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:medbooker/enums/user_roles.dart';
 import 'package:medbooker/widgets/user_image_picker.dart';
 
 final _firebase = FirebaseAuth.instance;
@@ -23,6 +24,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredUsername = '';
   var _enteredFullName = '';
   File? _selectedImage;
+  UserRole _chosenRole = UserRole.member;
   bool _isLogin = true;
 
   void _submit() async {
@@ -91,6 +93,7 @@ class _AuthScreenState extends State<AuthScreen> {
             'Email': _enteredEmail,
             'image_url': imageUrl,
             'creation_time': DateTime.now(),
+            'role': getRole(_chosenRole),
           },
         );
       }
@@ -259,6 +262,60 @@ class _AuthScreenState extends State<AuthScreen> {
                                       },
                                     ),
                                   ),
+                                ),
+                              if (!_isLogin)
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Radio<UserRole>(
+                                            value: UserRole.member,
+                                            groupValue: _chosenRole,
+                                            onChanged: (UserRole? value) {
+                                              setState(() {
+                                                _chosenRole = UserRole.member;
+                                              });
+                                            },
+                                          ),
+                                          Text(
+                                            getRole(UserRole.member),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          _chosenRole = UserRole.member;
+                                        });
+                                      },
+                                    ),
+                                    InkWell(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Radio<UserRole>(
+                                            value: UserRole.practitioner,
+                                            groupValue: _chosenRole,
+                                            onChanged: (UserRole? value) {
+                                              setState(() {
+                                                _chosenRole =
+                                                    UserRole.practitioner;
+                                              });
+                                            },
+                                          ),
+                                          Text(
+                                            getRole(UserRole.practitioner),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          _chosenRole = UserRole.practitioner;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 20),
