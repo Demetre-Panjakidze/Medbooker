@@ -19,10 +19,16 @@ class _HomepageScreenState extends State<HomepageScreen> {
         children: [
           Center(
             child: TextButton(
-                onPressed: () {
-                  _firebase.signOut();
-                },
-                child: const Text('Log out')),
+              onPressed: () async {
+                await Future.delayed(
+                  const Duration(
+                    milliseconds: 300,
+                  ),
+                );
+                _firebase.signOut();
+              },
+              child: const Text('Log out'),
+            ),
           )
         ],
       ),

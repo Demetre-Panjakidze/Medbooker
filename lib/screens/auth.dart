@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:medbooker/widgets/user_image_picker.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -19,6 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _enteredConfirmedPassword = '';
   var _enteredUsername = '';
   var _enteredFullName = '';
+  File? _selectedImage;
   bool _isLogin = true;
 
   void _submit() async {
@@ -31,22 +35,71 @@ class _AuthScreenState extends State<AuthScreen> {
       _form.currentState!.save();
     }
 
+    if (!_isLogin && _selectedImage == null) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please upload an image"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    if (!_isLogin && _enteredPassword != _enteredConfirmedPassword) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Passwords do not match."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     try {
-      final userCredentials = _isLogin
-          ? _firebase.signInWithEmailAndPassword(
-              email: _enteredEmail,
-              password: _enteredPassword,
-            )
-          : _firebase.createUserWithEmailAndPassword(
-              email: _enteredEmail,
-              password: _enteredPassword,
-            );
-      print(userCredentials);
+      await Future.delayed(
+        const Duration(
+          milliseconds: 300,
+        ),
+      );
+      if (_isLogin) {
+        final userCredentials = await _firebase.signInWithEmailAndPassword(
+          email: _enteredEmail,
+          password: _enteredPassword,
+        );
+      } else {
+        final userCredentials = await _firebase.createUserWithEmailAndPassword(
+          email: _enteredEmail,
+          password: _enteredPassword,
+        );
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child('${userCredentials.user!.uid}.jpg');
+
+        await storageRef.putFile(_selectedImage!);
+        final imageUrl = await storageRef.getDownloadURL();
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredentials.user!.uid)
+            .set(
+          {
+            'Full_name': _enteredFullName,
+            'Username': _enteredUsername,
+            'Email': _enteredEmail,
+            'image_url': imageUrl,
+            'creation_time': DateTime.now(),
+          },
+        );
+      }
     } on FirebaseAuthException catch (err) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(err.message ?? "Authentification failed"),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -56,16 +109,19 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.purple,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: SizedBox(
-              width: double.infinity,
-              child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: SizedBox(
+                width: double.infinity,
+                height: MediaQuery.sizeOf(context).height * 0.9,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Container(
                       margin: const EdgeInsets.only(top: 20),
@@ -77,84 +133,106 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     Card(
                       margin: const EdgeInsets.only(top: 20),
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Form(
-                            key: _form,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (!_isLogin)
-                                  TextFormField(
-                                    decoration: const InputDecoration(
-                                      icon: Icon(Icons.person),
-                                      labelText: 'Full name',
-                                    ),
-                                    initialValue: _enteredFullName,
-                                    validator: (value) {
-                                      if (value == null ||
-                                          value.trim().length < 10) {
-                                        return 'Please enter at least 10 character full name.';
-                                      } else if (value.trim().length > 45) {
-                                        return 'Please enter maximum of 45 character full name.';
-                                      }
-
-                                      return null;
-                                    },
-                                    onSaved: (newValue) {
-                                      _enteredFullName = newValue!;
-                                    },
-                                  ),
-                                if (!_isLogin)
-                                  TextFormField(
-                                    decoration: const InputDecoration(
-                                      icon: Icon(Icons.person),
-                                      labelText: 'Username',
-                                    ),
-                                    initialValue: _enteredUsername,
-                                    validator: (value) {
-                                      if (value == null ||
-                                          value.trim().length < 5) {
-                                        return 'Please enter at least 5 character username.';
-                                      } else if (value.trim().length > 25) {
-                                        return 'Please enter maximum of 25 character username.';
-                                      }
-
-                                      return null;
-                                    },
-                                    onSaved: (newValue) {
-                                      _enteredUsername = newValue!;
-                                    },
-                                  ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Form(
+                          key: _form,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (!_isLogin)
                                 TextFormField(
                                   decoration: const InputDecoration(
-                                    icon: Icon(Icons.alternate_email),
-                                    labelText: 'Email Address',
+                                    icon: Icon(Icons.person),
+                                    labelText: 'Full name',
                                   ),
-                                  initialValue: _enteredEmail,
-                                  keyboardType: TextInputType.emailAddress,
-                                  autocorrect: false,
-                                  textCapitalization: TextCapitalization.none,
+                                  initialValue: _enteredFullName,
                                   validator: (value) {
                                     if (value == null ||
-                                        value.trim().isEmpty ||
-                                        !value.contains('@')) {
-                                      return 'Please enter a valid email address.';
+                                        value.trim().length < 3) {
+                                      return 'Please enter at least 3 character full name.';
+                                    } else if (value.trim().length > 45) {
+                                      return 'Please enter maximum of 45 character full name.';
                                     }
 
                                     return null;
                                   },
                                   onSaved: (newValue) {
-                                    _enteredEmail = newValue!;
+                                    _enteredFullName = newValue!;
                                   },
                                 ),
+                              if (!_isLogin)
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    icon: Icon(Icons.person),
+                                    labelText: 'Username',
+                                  ),
+                                  initialValue: _enteredUsername,
+                                  validator: (value) {
+                                    if (value == null ||
+                                        value.trim().length < 3) {
+                                      return 'Please enter at least 3 character username.';
+                                    } else if (value.trim().length > 25) {
+                                      return 'Please enter maximum of 25 character username.';
+                                    }
+
+                                    return null;
+                                  },
+                                  onSaved: (newValue) {
+                                    _enteredUsername = newValue!;
+                                  },
+                                ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  icon: Icon(Icons.alternate_email),
+                                  labelText: 'Email Address',
+                                ),
+                                initialValue: _enteredEmail,
+                                keyboardType: TextInputType.emailAddress,
+                                autocorrect: false,
+                                textCapitalization: TextCapitalization.none,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.trim().isEmpty ||
+                                      !value.contains('@')) {
+                                    return 'Please enter a valid email address.';
+                                  }
+
+                                  return null;
+                                },
+                                onSaved: (newValue) {
+                                  _enteredEmail = newValue!;
+                                },
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                  icon: Icon(Icons.password),
+                                  labelText: 'Password',
+                                ),
+                                initialValue: _enteredPassword,
+                                obscureText: true,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.trim().length < 6) {
+                                    return 'Please enter at least 6 character password.';
+                                  } else if (value.trim().length > 30) {
+                                    return 'Please enter maximum of 30 character password.';
+                                  }
+
+                                  return null;
+                                },
+                                onSaved: (newValue) {
+                                  _enteredPassword = newValue!;
+                                },
+                              ),
+                              if (!_isLogin)
                                 TextFormField(
                                   decoration: const InputDecoration(
                                     icon: Icon(Icons.password),
-                                    labelText: 'Password',
+                                    labelText: 'Confirm Password',
                                   ),
-                                  initialValue: _enteredPassword,
+                                  initialValue: _enteredConfirmedPassword,
                                   obscureText: true,
                                   validator: (value) {
                                     if (value == null ||
@@ -167,69 +245,58 @@ class _AuthScreenState extends State<AuthScreen> {
                                     return null;
                                   },
                                   onSaved: (newValue) {
-                                    _enteredPassword = newValue!;
+                                    _enteredConfirmedPassword = newValue!;
                                   },
                                 ),
-                                if (!_isLogin)
-                                  TextFormField(
-                                    decoration: const InputDecoration(
-                                      icon: Icon(Icons.password),
-                                      labelText: 'Confirm Password',
-                                    ),
-                                    initialValue: _enteredConfirmedPassword,
-                                    obscureText: true,
-                                    validator: (value) {
-                                      if (value == null ||
-                                          value.trim().length < 6) {
-                                        return 'Please enter at least 6 character password.';
-                                      } else if (value.trim().length > 30) {
-                                        return 'Please enter maximum of 30 character password.';
-                                      }
-
-                                      return null;
-                                    },
-                                    onSaved: (newValue) {
-                                      _enteredConfirmedPassword = newValue!;
-                                    },
-                                  ),
+                              if (!_isLogin)
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 20),
-                                  child: Row(
-                                    children: [
-                                      TextButton(
-                                        child: Text(
-                                          _isLogin
-                                              ? "Don't have an account ?"
-                                              : "Already have an account ?",
-                                        ),
-                                        onPressed: () async {
-                                          await Future.delayed(
-                                            const Duration(
-                                              milliseconds: 300,
-                                            ),
-                                          );
-                                          setState(() {
-                                            _form.currentState?.reset();
-                                            _isLogin = !_isLogin;
-                                          });
-                                        },
-                                      ),
-                                      const SizedBox(
-                                        width: 20,
-                                      ),
-                                      Expanded(
-                                        child: OutlinedButton(
-                                          onPressed: _submit,
-                                          child: _isLogin
-                                              ? const Text('Sign in')
-                                              : const Text('Sign up'),
-                                        ),
-                                      ),
-                                    ],
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: UserImagePicker(
+                                      onPickedImage: (pickedImage) {
+                                        _selectedImage = pickedImage;
+                                      },
+                                    ),
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Row(
+                                  children: [
+                                    TextButton(
+                                      child: Text(
+                                        _isLogin
+                                            ? "Don't have an account ?"
+                                            : "Already have an account ?",
+                                      ),
+                                      onPressed: () async {
+                                        await Future.delayed(
+                                          const Duration(
+                                            milliseconds: 300,
+                                          ),
+                                        );
+                                        setState(() {
+                                          _form.currentState?.reset();
+                                          _isLogin = !_isLogin;
+                                        });
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Expanded(
+                                      child: OutlinedButton(
+                                        onPressed: _submit,
+                                        child: _isLogin
+                                            ? const Text('Sign in')
+                                            : const Text('Sign up'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
@@ -238,8 +305,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
