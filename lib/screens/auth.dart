@@ -252,6 +252,102 @@ class _AuthScreenState extends State<AuthScreen> {
                                   },
                                 ),
                               if (!_isLogin)
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 16.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Select role',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              if (!_isLogin)
+                                Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: InkWell(
+                                        splashColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Radio<UserRole>(
+                                              value: UserRole.member,
+                                              groupValue: _chosenRole,
+                                              onChanged: (UserRole? value) {
+                                                setState(() {
+                                                  _chosenRole = UserRole.member;
+                                                });
+                                              },
+                                            ),
+                                            Text(
+                                              getRole(UserRole.member),
+                                            ),
+                                            const SizedBox(
+                                              width: 15,
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            _chosenRole = UserRole.member;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: InkWell(
+                                        splashColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Radio<UserRole>(
+                                              value: UserRole.practitioner,
+                                              groupValue: _chosenRole,
+                                              onChanged: (UserRole? value) {
+                                                setState(() {
+                                                  _chosenRole =
+                                                      UserRole.practitioner;
+                                                });
+                                              },
+                                            ),
+                                            Text(
+                                              getRole(UserRole.practitioner),
+                                            ),
+                                            const SizedBox(
+                                              width: 15,
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            _chosenRole = UserRole.practitioner;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              if (!_isLogin)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 10.0),
                                   child: Align(
@@ -262,60 +358,6 @@ class _AuthScreenState extends State<AuthScreen> {
                                       },
                                     ),
                                   ),
-                                ),
-                              if (!_isLogin)
-                                Row(
-                                  children: [
-                                    InkWell(
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Radio<UserRole>(
-                                            value: UserRole.member,
-                                            groupValue: _chosenRole,
-                                            onChanged: (UserRole? value) {
-                                              setState(() {
-                                                _chosenRole = UserRole.member;
-                                              });
-                                            },
-                                          ),
-                                          Text(
-                                            getRole(UserRole.member),
-                                          ),
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          _chosenRole = UserRole.member;
-                                        });
-                                      },
-                                    ),
-                                    InkWell(
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Radio<UserRole>(
-                                            value: UserRole.practitioner,
-                                            groupValue: _chosenRole,
-                                            onChanged: (UserRole? value) {
-                                              setState(() {
-                                                _chosenRole =
-                                                    UserRole.practitioner;
-                                              });
-                                            },
-                                          ),
-                                          Text(
-                                            getRole(UserRole.practitioner),
-                                          ),
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          _chosenRole = UserRole.practitioner;
-                                        });
-                                      },
-                                    ),
-                                  ],
                                 ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 20),
