@@ -88,12 +88,14 @@ class _AuthScreenState extends State<AuthScreen> {
             .doc(userCredentials.user!.uid)
             .set(
           {
-            'Full_name': _enteredFullName,
-            'Username': _enteredUsername,
-            'Email': _enteredEmail,
-            'image_url': imageUrl,
-            'creation_time': DateTime.now(),
+            'fullName': _enteredFullName,
+            'displayName': _enteredUsername,
+            'email': _enteredEmail,
+            'photoURL': imageUrl,
+            'creationTime': DateTime.now(),
             'role': getRole(_chosenRole),
+            'entityNo':
+                _chosenRole == UserRole.member ? 1000000001 : 1100000111,
           },
         );
       }
