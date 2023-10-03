@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:medbooker/firebase_options.dart';
 import 'package:medbooker/screens/auth.dart';
-import 'package:medbooker/screens/dashboard.dart';
+import 'package:medbooker/screens/homepage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
