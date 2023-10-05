@@ -11,6 +11,6 @@ class UpcomingConsultationsPage extends StatefulWidget {
 class _UpcomingConsultationsPageState extends State<UpcomingConsultationsPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Text('upcoming-consultations');
   }
 }

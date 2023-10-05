@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medbooker/cubit/app_cubits.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -8,8 +9,10 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  final cubit = PageCubit();
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Text(cubit.state.toString());
   }
 }

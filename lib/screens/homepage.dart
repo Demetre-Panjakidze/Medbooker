@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:medbooker/cubit/app_cubits.dart';
 import 'package:medbooker/screens/dashboard.dart';
 import 'package:medbooker/widgets/drawer.dart';
 
 final FirebaseAuth _firebase = FirebaseAuth.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final cubit = PageCubit();
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -19,19 +21,18 @@ class _HomepageScreenState extends State<HomepageScreen> {
   User? _user;
   DocumentReference? _userDocRef;
   Map<String, dynamic>? _userData;
-  Widget screen = const DashboardPage();
 
   @override
   void initState() {
     super.initState();
-    _user = _firebase.currentUser;
-    _userDocRef = _firestore.collection('users').doc(_user!.uid);
 
     fetchUserData();
   }
 
   Future<void> fetchUserData() async {
     try {
+      _user = _firebase.currentUser;
+      _userDocRef = _firestore.collection('users').doc(_user!.uid);
       if (_userDocRef != null) {
         final DocumentSnapshot userSnapshot = await _userDocRef!.get();
         _userData = userSnapshot.data() as Map<String, dynamic>;
@@ -71,7 +72,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
             )
           ],
         ),
-        body: screen,
+        body: cubit.state,
       );
     } else {
       return const Column(
