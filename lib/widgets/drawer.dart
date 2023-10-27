@@ -50,16 +50,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             onTap: () {
               Navigator.pop(context);
               BlocProvider.of<PageIdentifierCubit>(context)
-                  .pageChange(page: 'Dashboard');
+                  .pageNameChange(page: 'Dashboard');
             },
           ),
           if (widget.userInfo["role"] == 'member')
             ListTile(
               title: const Text('Doctors'),
               onTap: () {
-                Navigator.pop(context);
-                BlocProvider.of<PageIdentifierCubit>(context)
-                    .pageChange(page: 'Doctors');
+                BlocProvider.of<PageIdentifierCubit>(context).pageNameChange(
+                  page: 'Doctors',
+                );
               },
             ),
           if (widget.userInfo["role"] == 'practitioner')
@@ -68,7 +68,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               onTap: () {
                 Navigator.pop(context);
                 BlocProvider.of<PageIdentifierCubit>(context)
-                    .pageChange(page: 'Requests');
+                    .pageNameChange(page: 'Requests');
               },
             ),
           ListTile(
@@ -76,7 +76,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             onTap: () {
               Navigator.pop(context);
               BlocProvider.of<PageIdentifierCubit>(context)
-                  .pageChange(page: 'Upcoming consultations');
+                  .pageNameChange(page: 'Upcoming consultations');
             },
           ),
           if (widget.userInfo["role"] == 'member')
@@ -85,7 +85,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               onTap: () {
                 Navigator.pop(context);
                 BlocProvider.of<PageIdentifierCubit>(context)
-                    .pageChange(page: 'Health records');
+                    .pageNameChange(page: 'Health records');
               },
             ),
           if (widget.userInfo["role"] == 'practitioner')
@@ -94,7 +94,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               onTap: () {
                 Navigator.pop(context);
                 BlocProvider.of<PageIdentifierCubit>(context)
-                    .pageChange(page: 'Population');
+                    .pageNameChange(page: 'Population');
               },
             ),
         ],

@@ -6,7 +6,7 @@ class PageIdentifierCubit extends Cubit<PageIdentifierState> {
   PageIdentifierCubit()
       : super(const PageIdentifierState(pageName: 'Dashboard'));
 
-  void pageChange({required String page}) {
+  void pageNameChange({required String page}) {
     emit(PageIdentifierState(pageName: page));
   }
 }

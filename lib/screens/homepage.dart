@@ -4,7 +4,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medbooker/cubit/page_identifier_cubit.dart';
+import 'package:medbooker/screens/consultation-requests.dart';
 import 'package:medbooker/screens/dashboard.dart';
+import 'package:medbooker/screens/doctors.dart';
+import 'package:medbooker/screens/health-records.dart';
+import 'package:medbooker/screens/patients.dart';
+import 'package:medbooker/screens/upcoming-consultations.dart';
 import 'package:medbooker/widgets/drawer.dart';
 
 final FirebaseAuth _firebase = FirebaseAuth.instance;
@@ -72,14 +77,25 @@ class _HomepageScreenState extends State<HomepageScreen> {
             )
           ],
         ),
-        body: Column(
-          children: [
-            BlocBuilder<PageIdentifierCubit, PageIdentifierState>(
-              builder: (context, state) {
-                return Text(state.pageName);
-              },
-            )
-          ],
+        body: BlocBuilder<PageIdentifierCubit, PageIdentifierState>(
+          builder: (context, state) {
+            switch (state.pageName) {
+              case 'Dashboard':
+                return const DashboardPage();
+              case 'Doctors':
+                return const DoctorsPage();
+              case 'Requests':
+                return const ConsultationRequestsPage();
+              case 'Upcoming consultations':
+                return const UpcomingConsultationsPage();
+              case 'Health records':
+                return const HealthRecordsPage();
+              case 'Population':
+                return const PatientsPage();
+              default:
+                return const DashboardPage();
+            }
+          },
         ),
       );
     } else {
