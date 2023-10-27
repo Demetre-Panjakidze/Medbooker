@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:medbooker/cubit/app_cubits.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medbooker/cubit/page_identifier_cubit.dart';
 import 'package:medbooker/screens/consultation-requests.dart';
 import 'package:medbooker/screens/dashboard.dart';
 import 'package:medbooker/screens/doctors.dart';
@@ -20,8 +21,6 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  final cubit = PageCubit();
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -49,65 +48,53 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           ListTile(
             title: const Text('Dashboard'),
             onTap: () {
-              if (cubit.state != DashboardPage()) {
-                cubit.pageToDashboardPage();
-              }
-              Navigator.of(context).pop();
-              print(cubit.state);
+              Navigator.pop(context);
+              BlocProvider.of<PageIdentifierCubit>(context)
+                  .pageChange(page: 'Dashboard');
             },
           ),
           if (widget.userInfo["role"] == 'member')
             ListTile(
               title: const Text('Doctors'),
               onTap: () {
-                if (cubit.state != DoctorsPage()) {
-                  cubit.pageToDoctorsPage();
-                }
-                Navigator.of(context).pop();
-                print(cubit.state);
+                Navigator.pop(context);
+                BlocProvider.of<PageIdentifierCubit>(context)
+                    .pageChange(page: 'Doctors');
               },
             ),
           if (widget.userInfo["role"] == 'practitioner')
             ListTile(
               title: const Text('Requests'),
               onTap: () {
-                if (cubit.state != ConsultationRequestsPage()) {
-                  cubit.pageToConsultationRequestsPage();
-                }
-                Navigator.of(context).pop();
-                print(cubit.state);
+                Navigator.pop(context);
+                BlocProvider.of<PageIdentifierCubit>(context)
+                    .pageChange(page: 'Requests');
               },
             ),
           ListTile(
             title: const Text('Upcoming consultations'),
             onTap: () {
-              if (cubit.state != UpcomingConsultationsPage()) {
-                cubit.pageToUpcomingConsultationsPage();
-              }
-              Navigator.of(context).pop();
-              print(cubit.state);
+              Navigator.pop(context);
+              BlocProvider.of<PageIdentifierCubit>(context)
+                  .pageChange(page: 'Upcoming consultations');
             },
           ),
           if (widget.userInfo["role"] == 'member')
             ListTile(
               title: const Text('Health records'),
               onTap: () {
-                if (cubit.state != HealthRecordsPage()) {
-                  cubit.pageToHealthRecordsPage();
-                }
-                Navigator.of(context).pop();
-                print(cubit.state);
+                Navigator.pop(context);
+                BlocProvider.of<PageIdentifierCubit>(context)
+                    .pageChange(page: 'Health records');
               },
             ),
           if (widget.userInfo["role"] == 'practitioner')
             ListTile(
               title: const Text('Population'),
               onTap: () {
-                if (cubit.state != PatientsPage()) {
-                  cubit.pageToPatientsPage();
-                }
-                Navigator.of(context).pop();
-                print(cubit.state);
+                Navigator.pop(context);
+                BlocProvider.of<PageIdentifierCubit>(context)
+                    .pageChange(page: 'Population');
               },
             ),
         ],

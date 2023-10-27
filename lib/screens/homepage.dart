@@ -2,13 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:medbooker/cubit/app_cubits.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medbooker/cubit/page_identifier_cubit.dart';
 import 'package:medbooker/screens/dashboard.dart';
 import 'package:medbooker/widgets/drawer.dart';
 
 final FirebaseAuth _firebase = FirebaseAuth.instance;
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-final cubit = PageCubit();
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -72,7 +72,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
             )
           ],
         ),
-        body: cubit.state,
+        body: Column(
+          children: [
+            BlocBuilder<PageIdentifierCubit, PageIdentifierState>(
+              builder: (context, state) {
+                return Text(state.pageName);
+              },
+            )
+          ],
+        ),
       );
     } else {
       return const Column(
