@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medbooker/cubit/page_identifier_cubit.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});

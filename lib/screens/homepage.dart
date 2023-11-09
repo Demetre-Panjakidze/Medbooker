@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medbooker/cubit/page_identifier_cubit.dart';
 import 'package:medbooker/screens/consultation-requests.dart';
 import 'package:medbooker/screens/dashboard.dart';
 import 'package:medbooker/screens/doctors.dart';
@@ -77,26 +76,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
             )
           ],
         ),
-        body: BlocBuilder<PageIdentifierCubit, PageIdentifierState>(
-          builder: (context, state) {
-            switch (state.pageName) {
-              case 'Dashboard':
-                return const DashboardPage();
-              case 'Doctors':
-                return const DoctorsPage();
-              case 'Requests':
-                return const ConsultationRequestsPage();
-              case 'Upcoming consultations':
-                return const UpcomingConsultationsPage();
-              case 'Health records':
-                return const HealthRecordsPage();
-              case 'Population':
-                return const PatientsPage();
-              default:
-                return const DashboardPage();
-            }
-          },
-        ),
+        body: const DashboardPage(),
       );
     } else {
       return const Column(

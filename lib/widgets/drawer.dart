@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:medbooker/cubit/page_identifier_cubit.dart';
 import 'package:medbooker/screens/consultation-requests.dart';
 import 'package:medbooker/screens/dashboard.dart';
 import 'package:medbooker/screens/doctors.dart';
@@ -49,17 +48,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             title: const Text('Dashboard'),
             onTap: () {
               Navigator.pop(context);
-              BlocProvider.of<PageIdentifierCubit>(context)
-                  .pageNameChange(page: 'Dashboard');
             },
           ),
           if (widget.userInfo["role"] == 'member')
             ListTile(
               title: const Text('Doctors'),
               onTap: () {
-                BlocProvider.of<PageIdentifierCubit>(context).pageNameChange(
-                  page: 'Doctors',
-                );
+                Navigator.pop(context);
               },
             ),
           if (widget.userInfo["role"] == 'practitioner')
@@ -67,16 +62,12 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               title: const Text('Requests'),
               onTap: () {
                 Navigator.pop(context);
-                BlocProvider.of<PageIdentifierCubit>(context)
-                    .pageNameChange(page: 'Requests');
               },
             ),
           ListTile(
             title: const Text('Upcoming consultations'),
             onTap: () {
               Navigator.pop(context);
-              BlocProvider.of<PageIdentifierCubit>(context)
-                  .pageNameChange(page: 'Upcoming consultations');
             },
           ),
           if (widget.userInfo["role"] == 'member')
@@ -84,8 +75,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               title: const Text('Health records'),
               onTap: () {
                 Navigator.pop(context);
-                BlocProvider.of<PageIdentifierCubit>(context)
-                    .pageNameChange(page: 'Health records');
               },
             ),
           if (widget.userInfo["role"] == 'practitioner')
@@ -93,8 +82,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               title: const Text('Population'),
               onTap: () {
                 Navigator.pop(context);
-                BlocProvider.of<PageIdentifierCubit>(context)
-                    .pageNameChange(page: 'Population');
               },
             ),
         ],
